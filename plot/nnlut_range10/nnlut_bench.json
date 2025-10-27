@@ -1,0 +1,62 @@
+[
+  {
+    "op": "silu",
+    "hidden": 256,
+    "segs": 256,
+    "cut_pts": 257,
+    "AE_max": 0.003805875778198242,
+    "AE_mean": 0.0003198722843080759,
+    "ARE_mean": 0.05656326562166214,
+    "detail": "plot/nnlut_range10/lut_details_silu_H256_sub.json",
+    "plot": "plot/nnlut_range10/lut_plot_silu_H256_sub_large.png",
+    "full_fp16": false
+  },
+  {
+    "op": "gelu",
+    "hidden": 256,
+    "segs": 256,
+    "cut_pts": 257,
+    "AE_max": 0.0036657750606536865,
+    "AE_mean": 0.00044276073458604515,
+    "ARE_mean": 1.0388948917388916,
+    "detail": "plot/nnlut_range10/lut_details_gelu_H256_sub.json",
+    "plot": "plot/nnlut_range10/lut_plot_gelu_H256_sub_large.png",
+    "full_fp16": false
+  },
+  {
+    "op": "exp",
+    "hidden": 256,
+    "segs": 256,
+    "cut_pts": 257,
+    "AE_max": 0.0003199651837348938,
+    "AE_mean": 1.5957541108946316e-05,
+    "ARE_mean": 0.0057124244049191475,
+    "detail": "plot/nnlut_range10/lut_details_exp_H256_sub.json",
+    "plot": "plot/nnlut_range10/lut_plot_exp_H256_sub_large.png",
+    "full_fp16": false
+  },
+  {
+    "op": "divide",
+    "hidden": 256,
+    "segs": 256,
+    "cut_pts": 257,
+    "AE_max": 0.0007849745452404022,
+    "AE_mean": 0.00015219769557006657,
+    "ARE_mean": 0.02063952200114727,
+    "detail": "plot/nnlut_range10/lut_details_divide_H256_sub.json",
+    "plot": "plot/nnlut_range10/lut_plot_divide_H256_sub_large.png",
+    "full_fp16": false
+  },
+  {
+    "op": "invsqrt",
+    "hidden": 256,
+    "segs": 256,
+    "cut_pts": 257,
+    "AE_max": 0.0015552639961242676,
+    "AE_mean": 0.0002220675814896822,
+    "ARE_mean": 0.0024036974646151066,
+    "detail": "plot/nnlut_range10/lut_details_invsqrt_H256_sub.json",
+    "plot": "plot/nnlut_range10/lut_plot_invsqrt_H256_sub_large.png",
+    "full_fp16": false
+  }
+]

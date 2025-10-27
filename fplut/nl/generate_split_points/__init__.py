@@ -1,0 +1,1 @@
+from .generate_split_points import generate_lut_table_v2

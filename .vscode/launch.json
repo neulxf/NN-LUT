@@ -1,0 +1,132 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "eval",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "eval.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--model_name=Qwen2.5-7B-Instruct",
+                // "--model=weights/Qwen2.5-32B-Instruct",
+                // "--attn_implementation=eager",
+                // "--use_fplut"
+            ],
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "6",
+                // "CUDA_LAUNCH_BLOCKING": "1",
+            }
+        },
+        {
+            "name": "eval_ppl",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "eval_ppl.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                // "--model=weights/llama3-70b-hf",
+                "--model=Qwen2.5-7B-Instruct",
+                // "--attn_implementation=eager",
+                "--use_fplut"
+            ],
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "3",
+                // "CUDA_LAUNCH_BLOCKING": "1",
+            }
+        },
+        {
+            "name": "nnlut",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "nnlut/run_nnlut_bench.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "3",
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "args": [
+                "--cuts=17",
+                "--steps=10000",
+                "--batch=4096",
+            ]
+        },
+        {
+            "name": "activation",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "fplut/activation.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "3",
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "eval_qwen3_ppl",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "eval_qwen3_ppl.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--model=Qwen3-30B-A3B-bf16",
+            ],
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "4",
+            }
+        },
+        {
+            "name": "eval_qwen3",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "eval_qwen3.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--model=Qwen3-8B-bf16",
+            ],
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "4",
+            }
+        },
+        {
+            "name": "figure3",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "plots/figure3.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--save_dir=plot/NLI_lut_plot_large1",
+                "--plot_large",
+            ],
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "7",
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "figure3_small",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "plots/figure3.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--save_dir=plot/NLI_lut_plot_small1",
+            ],
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "7",
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+    ]
+}
