@@ -21,6 +21,7 @@ def _kernel_lut_fast(
     interval_lengths_ptr,  # New pointer for interval lengths
     n_cut_points: tl.constexpr,  # 11
     n_x: tl.constexpr,
+    table_size: tl.constexpr,  # 添加 table_size 参数
     BLOCK_SIZE: tl.constexpr,
 ):
     """
@@ -42,8 +43,8 @@ def _kernel_lut_fast(
     first_cut_point = tl.load(cut_points_ptr).to(tl.float32)
     last_cut_point = tl.load(cut_points_ptr + n_cut_points - 1).to(tl.float32)
     first_table_val = tl.load(table_ptr).to(tl.float32)
-    # The last table value is at index 258 for the described structure
-    last_table_val = tl.load(table_ptr + 258).to(tl.float32)
+    # 动态获取最后一个表值索引
+    last_table_val = tl.load(table_ptr + (table_size - 1)).to(tl.float32)
 
     # --- 4. Find the correct interval index without looping ---
     # This is the core optimization. We unroll the search for the 10 intervals.
@@ -85,10 +86,17 @@ def _kernel_lut_fast(
     idxs = tl.maximum(0, idxs)
     idxs = tl.minimum(idxs, interval_len).to(tl.int16)
     idxs_plus = tl.minimum(idxs + 1, interval_len).to(tl.int16)
+    
+    # 添加边界检查，防止索引越界
+    idxs_plus = tl.minimum(idxs_plus, interval_len).to(tl.int16)
+    table_idx = pre_idx + idxs
+    table_idx_plus = pre_idx + idxs_plus
+    table_idx = tl.minimum(table_idx, table_size - 1)
+    table_idx_plus = tl.minimum(table_idx_plus, table_size - 1)
 
     # Gather the two table values for interpolation
-    v1 = tl.load(table_ptr + pre_idx + idxs, mask=in_bounds_mask, other=0.0).to(tl.float32)
-    v2 = tl.load(table_ptr + pre_idx + idxs_plus, mask=in_bounds_mask, other=0.0).to(tl.float32)
+    v1 = tl.load(table_ptr + table_idx, mask=in_bounds_mask, other=0.0).to(tl.float32)
+    v2 = tl.load(table_ptr + table_idx_plus, mask=in_bounds_mask, other=0.0).to(tl.float32)
 
     # Calculate the interpolated output
     # m2 = 1.0 - m1
@@ -122,14 +130,37 @@ def lut_fast_triton(x, cut_points, values, scales):
     """
     torch.cuda.set_device(x.device) 
     assert cut_points.dim() == 1 and cut_points.size(0) == 11, "cut_points must be 1D and have 11 elements"
-    assert values.dim() == 1 and values.size(0) == 259, "table_values must be 1D and have 259 elements"
-    # --- Pre-computation on Host ---
-    # Based on the original kernel's logic: 0, 1, 1+32, 1+32*2, ..., 257
-    pre_indices = torch.tensor(
-        [0] + [1 + 32 * (i - 1) for i in range(1, 9)] + [257], device=x.device, dtype=torch.int32
-    )
-    # Based on the original kernel's logic: 1 for ends, 32 for middle.
-    interval_lengths = torch.tensor([1] + [32] * 8 + [1], device=x.device, dtype=torch.int32)
+    
+    # 从 values 表大小推导 num_points 和 table_size
+    table_size = values.size(0)
+    num_points = (table_size - 3) // 8
+    
+    # 动态计算 pre_indices
+    # 第一个区间（cut_indices=0）：索引从 0 开始
+    # 中间 8 个区间（cut_indices=1 到 8）：每个区间从 1 + (i-1) * num_points 开始
+    # 最后一个区间（cut_indices=9）：从 1 + 8 * num_points 开始
+    pre_indices_list = [0]  # cut_indices = 0
+    for i in range(1, 9):  # cut_indices = 1 到 8
+        pre_indices_list.append(1 + (i - 1) * num_points)
+    # 最后一个区间：cut_indices = 9
+    pre_indices_list.append(1 + 8 * num_points)
+    
+    pre_indices = torch.tensor(pre_indices_list, device=x.device, dtype=torch.int32)
+    
+    # 动态计算 interval_lengths
+    # 第一个区间（cut_indices=0）：1 个点
+    # 中间 8 个区间（cut_indices=1 到 8）：每个区间 num_points 个点
+    # 最后一个区间（cut_indices=9）：table_size - 1 - (1 + 8*num_points) 个点
+    interval_lengths_list = [1]  # cut_indices = 0
+    for i in range(8):  # cut_indices = 1 到 8
+        interval_lengths_list.append(num_points)
+    # 最后一个区间
+    last_start = 1 + 8 * num_points
+    last_length = table_size - 1 - last_start
+    interval_lengths_list.append(max(1, last_length))
+    
+    interval_lengths = torch.tensor(interval_lengths_list, device=x.device, dtype=torch.int32)
+    
     # Prepare tensors
     x = x.contiguous().float()
     output = torch.empty_like(x)
@@ -146,21 +177,42 @@ def lut_fast_triton(x, cut_points, values, scales):
         interval_lengths_ptr=interval_lengths,
         n_cut_points=cut_points.size(0),
         n_x=n_x,
+        table_size=table_size,  # 传递 table_size
     )
     return output
 
 
 def lut_fast_torch(x: torch.Tensor, cut_points: torch.Tensor, values: torch.Tensor, scales: torch.Tensor):
-    # assert (
-    #     (x.dtype == torch.float16)
-    #     and (cut_points.dtype == torch.float16)
-    #     and (values.dtype == torch.float16)
-    #     and (scales.dtype == torch.float16)
-    # ), "x, cut_points, table_values, mul_scales must be float16"
-    pre_indices = torch.tensor(
-        [0] + [1 + 32 * (i - 1) for i in range(1, 9)] + [257], device=x.device, dtype=torch.int16
-    )
-    interval_lengths = torch.tensor([1] + [32] * 8 + [1], device=x.device, dtype=torch.int16)
+    # 从 values 表大小推导 num_points
+    table_size = values.size(0)
+    num_points = (table_size - 3) // 8
+    
+    # 动态计算 pre_indices
+    # 第一个区间（cut_indices=0）：索引从 0 开始
+    # 中间 8 个区间（cut_indices=1 到 8）：每个区间从 1 + (i-1) * num_points 开始
+    # 最后一个区间（cut_indices=9）：从 1 + 8 * num_points 开始
+    pre_indices_list = [0]  # cut_indices = 0
+    for i in range(1, 9):  # cut_indices = 1 到 8
+        pre_indices_list.append(1 + (i - 1) * num_points)
+    # 最后一个区间：cut_indices = 9
+    pre_indices_list.append(1 + 8 * num_points)
+    
+    pre_indices = torch.tensor(pre_indices_list, device=x.device, dtype=torch.int16)
+    
+    # 动态计算 interval_lengths
+    # 第一个区间（cut_indices=0）：1 个点
+    # 中间 8 个区间（cut_indices=1 到 8）：每个区间 num_points 个点
+    # 最后一个区间（cut_indices=9）：table_size - 1 - (1 + 8*num_points) 个点
+    interval_lengths_list = [1]  # cut_indices = 0
+    for i in range(8):  # cut_indices = 1 到 8
+        interval_lengths_list.append(num_points)
+    # 最后一个区间
+    last_start = 1 + 8 * num_points
+    last_length = table_size - 1 - last_start
+    interval_lengths_list.append(max(1, last_length))
+    
+    interval_lengths = torch.tensor(interval_lengths_list, device=x.device, dtype=torch.int16)
+    
     # x = x.clip(min=cut_points[0],max=cut_points[-1])
     # right means [,)
     cut_indices = torch.bucketize(x, cut_points, right=True).sub_(1).clip_(0, scales.numel() - 1)
@@ -182,6 +234,10 @@ def lut_fast_torch(x: torch.Tensor, cut_points: torch.Tensor, values: torch.Tens
 
     idxs = idxs + pre_indices
     idxs_plus = idxs_plus + pre_indices
+    
+    # 添加边界检查，防止索引越界
+    idxs = idxs.clamp(0, table_size - 1)
+    idxs_plus = idxs_plus.clamp(0, table_size - 1)
 
     y1 = values[idxs.int()]
     y2 = values[idxs_plus.int()]

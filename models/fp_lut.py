@@ -2,6 +2,11 @@ import torch, torch.nn as nn, torch.nn.functional as F
 from .triton_binary import float16_add_triton, float16_mul_triton
 from fplut.nl._lut_fast_imp import lut_fast
 
+# Nnum_points=16
+Nnum_points=4
+
+Ntable_size=Nnum_points*8+3
+
 cut_points_dict = {
     "leaky_relu": [
         -65472.0,
@@ -401,8 +406,10 @@ class NewTable(nn.Module):
         self,
         func,
         cut_points,
-        table_size=259,
-        num_points=32,
+        # table_size=259,
+		table_size=Ntable_size,
+        # num_points=32,
+		num_points=Nnum_points,
         min=-65504,
         max=65504,
         device="cpu",
@@ -595,7 +602,8 @@ class FPLUT(nn.Module):
         if self.table is None:
             cut_points = cut_points_dict[self.func_name]
             self.table = NewTable(
-                self.function, cut_points, table_size=259, device=x.device
+                # self.function, cut_points, table_size=259, device=x.device
+				self.function, cut_points, table_size=Ntable_size, device=x.device
             )
 
         if self.func_name in ["cos", "sin"]:
@@ -638,7 +646,8 @@ class FPSoftMax(nn.Module):
                 0.0,
             ]
             self.lut_exp = NewTable(
-                torch.exp, cut_points, table_size=259, device=x.device
+                # torch.exp, cut_points, table_size=259, device=x.device
+				torch.exp, cut_points, table_size=Ntable_size, device=x.device
             )
 
         # if self.lut_div is None:

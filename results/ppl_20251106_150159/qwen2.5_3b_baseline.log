@@ -1,0 +1,48 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+============================================================
+[INFO] Loading Model
+============================================================
+[INFO] Model Name: Qwen2.5-3B-Instruct
+[INFO] Model Path: Qwen/Qwen2.5-3B-Instruct
+[INFO] Attention Implementation: eager
+[INFO] Data Type: bfloat16 (torch.bfloat16)
+[INFO] Using standard activation functions (baseline)
+[INFO] Sequence Length: 2048
+============================================================
+Traceback (most recent call last):
+  File "/home/lxf/workspace/NN-LUT/eval_ppl.py", line 557, in <module>
+    main(args)
+  File "/home/lxf/workspace/NN-LUT/eval_ppl.py", line 381, in main
+    model = AutoModelForCausalLM.from_pretrained(model_cfg["model"], attn_implementation=model_cfg["attn_implementation"], torch_dtype=torch_dtype)
+  File "/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/transformers/models/auto/auto_factory.py", line 604, in from_pretrained
+    return model_class.from_pretrained(
+  File "/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/transformers/modeling_utils.py", line 277, in _wrapper
+    return func(*args, **kwargs)
+  File "/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/transformers/modeling_utils.py", line 4900, in from_pretrained
+    checkpoint_files, sharded_metadata = _get_resolved_checkpoint_files(
+  File "/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/transformers/modeling_utils.py", line 1200, in _get_resolved_checkpoint_files
+    checkpoint_files, sharded_metadata = get_checkpoint_shard_files(
+  File "/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/transformers/utils/hub.py", line 1084, in get_checkpoint_shard_files
+    cached_filenames = cached_files(
+  File "/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/transformers/utils/hub.py", line 567, in cached_files
+    raise e
+  File "/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/transformers/utils/hub.py", line 494, in cached_files
+    snapshot_download(
+  File "/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/huggingface_hub/_snapshot_download.py", line 330, in snapshot_download
+    _inner_hf_hub_download(file)
+  File "/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/huggingface_hub/_snapshot_download.py", line 306, in _inner_hf_hub_download
+    return hf_hub_download(
+  File "/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1007, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+  File "/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1168, in _hf_hub_download_to_cache_dir
+    _download_to_tmp_and_move(
+  File "/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1720, in _download_to_tmp_and_move
+    xet_get(
+  File "/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 626, in xet_get
+    download_files(
+RuntimeError: Data processing error: CAS service error : ReqwestMiddleware Error: couldn't get token: TokenRefreshFailure("Error refreshing token: PyErr { type: <class 'requests.exceptions.SSLError'>, value: SSLError(MaxRetryError(\"HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /api/models/Qwen/Qwen2.5-3B-Instruct/xet-read-token/aa8e72537993ba99e69dfaafa59ed015b17504d1 (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1017)')))\"), '(Request ID: 7f5f8156-c8ec-452c-94ca-394c060273a3)'), traceback: Some(\"Traceback (most recent call last):\\n  File \\\"/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/huggingface_hub/file_download.py\\\", line 594, in token_refresher\\n    connection_info = refresh_xet_connection_info(file_data=xet_file_data, headers=headers)\\n  File \\\"/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py\\\", line 114, in _inner_fn\\n    return fn(*args, **kwargs)\\n  File \\\"/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/huggingface_hub/utils/_xet.py\\\", line 116, in refresh_xet_connection_info\\n    return _fetch_xet_connection_info_with_url(file_data.refresh_route, headers)\\n  File \\\"/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py\\\", line 114, in _inner_fn\\n    return fn(*args, **kwargs)\\n  File \\\"/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/huggingface_hub/utils/_xet.py\\\", line 186, in _fetch_xet_connection_info_with_url\\n    resp = get_session().get(headers=headers, url=url, params=params)\\n  File \\\"/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/requests/sessions.py\\\", line 602, in get\\n    return self.request(\\\"GET\\\", url, **kwargs)\\n  File \\\"/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/requests/sessions.py\\\", line 589, in request\\n    resp = self.send(prep, **send_kwargs)\\n  File \\\"/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/requests/sessions.py\\\", line 703, in send\\n    r = adapter.send(request, **kwargs)\\n  File \\\"/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/huggingface_hub/utils/_http.py\\\", line 95, in send\\n    return super().send(request, *args, **kwargs)\\n  File \\\"/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/requests/adapters.py\\\", line 675, in send\\n    raise SSLError(e, request=request)\\n\") }")
+[W1106 16:27:34.511465485 AllocatorConfig.cpp:28] Warning: PYTORCH_CUDA_ALLOC_CONF is deprecated, use PYTORCH_ALLOC_CONF instead (function operator())

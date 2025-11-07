@@ -1,0 +1,3 @@
+python eval.py --model_name meta-llama/Llama-3.2-1B --use_nnlut --lut_silu_path nnlut_bench/lut_details_silu_H32_sub.json --lut_exp_path nnlut_bench/lut_details_exp_H32_sub.json
+python eval.py --model_name meta-llama/Llama-3.2-3B 
+python eval.py --model_name meta-llama/Llama-3.2-3B --use_nnlut --lut_silu_path nnlut_bench/lut_details_silu_H32_sub.json --lut_exp_path nnlut_bench/lut_details_exp_H32_sub.json
