@@ -341,6 +341,7 @@ def main(args):
             f"Please add it to models/config.py or use one of the configured models: {list(cfgs.keys())}"
         )
     model_cfg = cfgs[args.model_name]
+    model_cfg["torch_dtype"] = "float32"
     # Convert string dtype to torch dtype if needed
     dtype_str = model_cfg["torch_dtype"]
     if isinstance(dtype_str, str):

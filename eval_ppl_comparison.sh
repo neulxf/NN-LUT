@@ -4,11 +4,10 @@
 
 export PYTHONPATH=.
 export CUDA_VISIBLE_DEVICES=0
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 # 创建结果目录
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-RESULTS_DIR="results/ppl_${TIMESTAMP}"
+RESULTS_DIR="results/ppl_fp32_${TIMESTAMP}"
 mkdir -p "$RESULTS_DIR"
 
 # LUT 文件路径（统一使用 H32）
@@ -206,33 +205,33 @@ echo "[Group 3] Medium models (2B-4B) - SeqLen=default"
 
 # Qwen2.5-3B-Instruct
 echo "  -> Qwen2.5-3B-Instruct - Baseline"
-python eval_ppl.py --model_name Qwen2.5-3B-Instruct --seqlen 512 2>&1 | tee "$RESULTS_DIR/qwen2.5_3b_baseline.log"
+python eval_ppl.py --model_name Qwen2.5-3B-Instruct  2>&1 | tee "$RESULTS_DIR/qwen2.5_3b_baseline.log"
 
 echo "  -> Qwen2.5-3B-Instruct - FPLUT"
-python eval_ppl.py --model_name Qwen2.5-3B-Instruct --use_fplut --seqlen 512 2>&1 | tee "$RESULTS_DIR/qwen2.5_3b_fplut.log"
+python eval_ppl.py --model_name Qwen2.5-3B-Instruct --use_fplut  2>&1 | tee "$RESULTS_DIR/qwen2.5_3b_fplut.log"
 
 echo "  -> Qwen2.5-3B-Instruct - NN-LUT"
-python eval_ppl.py --model_name Qwen2.5-3B-Instruct --use_nnlut --lut_silu_path "$LUT_SILU" --lut_gelu_path "$LUT_GELU" --lut_exp_path "$LUT_EXP" --seqlen 512 2>&1 | tee "$RESULTS_DIR/qwen2.5_3b_nnlut.log"
+python eval_ppl.py --model_name Qwen2.5-3B-Instruct --use_nnlut --lut_silu_path "$LUT_SILU" --lut_gelu_path "$LUT_GELU" --lut_exp_path "$LUT_EXP"  2>&1 | tee "$RESULTS_DIR/qwen2.5_3b_nnlut.log"
 
 # Llama-3.2-3B
 echo "  -> Llama-3.2-3B - Baseline"
-python eval_ppl.py --model_name Llama-3.2-3B --seqlen 512 2>&1 | tee "$RESULTS_DIR/llama3.2_3b_baseline.log"
+python eval_ppl.py --model_name Llama-3.2-3B  2>&1 | tee "$RESULTS_DIR/llama3.2_3b_baseline.log"
 
 echo "  -> Llama-3.2-3B - FPLUT"
-python eval_ppl.py --model_name Llama-3.2-3B --use_fplut --seqlen 512 2>&1 | tee "$RESULTS_DIR/llama3.2_3b_fplut.log"
+python eval_ppl.py --model_name Llama-3.2-3B --use_fplut  2>&1 | tee "$RESULTS_DIR/llama3.2_3b_fplut.log"
 
 echo "  -> Llama-3.2-3B - NN-LUT"
-python eval_ppl.py --model_name Llama-3.2-3B --use_nnlut --lut_silu_path "$LUT_SILU" --lut_gelu_path "$LUT_GELU" --lut_exp_path "$LUT_EXP" --seqlen 512 2>&1 | tee "$RESULTS_DIR/llama3.2_3b_nnlut.log"
+python eval_ppl.py --model_name Llama-3.2-3B --use_nnlut --lut_silu_path "$LUT_SILU" --lut_gelu_path "$LUT_GELU" --lut_exp_path "$LUT_EXP"  2>&1 | tee "$RESULTS_DIR/llama3.2_3b_nnlut.log"
 
 # SmolLM-3B
 echo "  -> SmolLM-3B - Baseline"
-python eval_ppl.py --model_name SmolLM-3B --seqlen 512 2>&1 | tee "$RESULTS_DIR/smollm_3b_baseline.log"
+python eval_ppl.py --model_name SmolLM-3B  2>&1 | tee "$RESULTS_DIR/smollm_3b_baseline.log"
 
 echo "  -> SmolLM-3B - FPLUT"
-python eval_ppl.py --model_name SmolLM-3B --use_fplut --seqlen 512 2>&1 | tee "$RESULTS_DIR/smollm_3b_fplut.log"
+python eval_ppl.py --model_name SmolLM-3B --use_fplut  2>&1 | tee "$RESULTS_DIR/smollm_3b_fplut.log"
 
 echo "  -> SmolLM-3B - NN-LUT"
-python eval_ppl.py --model_name SmolLM-3B --use_nnlut --lut_silu_path "$LUT_SILU" --lut_gelu_path "$LUT_GELU" --lut_exp_path "$LUT_EXP" --seqlen 512 2>&1 | tee "$RESULTS_DIR/smollm_3b_nnlut.log"
+python eval_ppl.py --model_name SmolLM-3B --use_nnlut --lut_silu_path "$LUT_SILU" --lut_gelu_path "$LUT_GELU" --lut_exp_path "$LUT_EXP"  2>&1 | tee "$RESULTS_DIR/smollm_3b_nnlut.log"
 
 # # StableLM-3B
 # echo "  -> StableLM-3B - Baseline"
@@ -257,6 +256,41 @@ python eval_ppl.py --model_name SmolLM-3B --use_nnlut --lut_silu_path "$LUT_SILU
 # python eval_ppl.py --model_name RedPajama-3B --use_fplut  2>&1 | tee "$RESULTS_DIR/redpajama_3b_fplut.log"
 # echo "  -> RedPajama-3B - NN-LUT"
 # python eval_ppl.py --model_name RedPajama-3B --use_nnlut --lut_silu_path "$LUT_SILU" --lut_gelu_path "$LUT_GELU" --lut_exp_path "$LUT_EXP"  2>&1 | tee "$RESULTS_DIR/redpajama_3b_nnlut.log"
+
+# ========== 大模型 (7B-8B) - 来自 weights 文件夹 ==========
+echo ""
+echo "[Group 4] Large models (7B-8B) from weights/ - SeqLen=default"
+
+# Llama-3-8B (本地权重)
+echo "  -> Llama-3-8B (local) - Baseline"
+python eval_ppl.py --model_name llama3-8b-hf  2>&1 | tee "$RESULTS_DIR/llama3_8b_baseline.log"
+
+echo "  -> Llama-3-8B (local) - FPLUT"
+python eval_ppl.py --model_name llama3-8b-hf --use_fplut  2>&1 | tee "$RESULTS_DIR/llama3_8b_fplut.log"
+
+echo "  -> Llama-3-8B (local) - NN-LUT"
+python eval_ppl.py --model_name llama3-8b-hf --use_nnlut --lut_silu_path "$LUT_SILU" --lut_gelu_path "$LUT_GELU" --lut_exp_path "$LUT_EXP"  2>&1 | tee "$RESULTS_DIR/llama3_8b_nnlut.log"
+
+# Qwen3-8B (本地权重)
+echo "  -> Qwen3-8B (local) - Baseline"
+python eval_ppl.py --model_name Qwen3-8B-bf16  2>&1 | tee "$RESULTS_DIR/qwen3_8b_baseline.log"
+
+echo "  -> Qwen3-8B (local) - FPLUT"
+python eval_ppl.py --model_name Qwen3-8B-bf16 --use_fplut  2>&1 | tee "$RESULTS_DIR/qwen3_8b_fplut.log"
+
+echo "  -> Qwen3-8B (local) - NN-LUT"
+python eval_ppl.py --model_name Qwen3-8B-bf16 --use_nnlut --lut_silu_path "$LUT_SILU" --lut_gelu_path "$LUT_GELU" --lut_exp_path "$LUT_EXP"  2>&1 | tee "$RESULTS_DIR/qwen3_8b_nnlut.log"
+
+# Qwen2.5-7B-Instruct (本地权重)
+echo "  -> Qwen2.5-7B-Instruct (local) - Baseline"
+python eval_ppl.py --model_name Qwen2.5-7B-Instruct-bf16  2>&1 | tee "$RESULTS_DIR/qwen2.5_7b_baseline.log"
+
+echo "  -> Qwen2.5-7B-Instruct (local) - FPLUT"
+python eval_ppl.py --model_name Qwen2.5-7B-Instruct-bf16 --use_fplut  2>&1 | tee "$RESULTS_DIR/qwen2.5_7b_fplut.log"
+
+echo "  -> Qwen2.5-7B-Instruct (local) - NN-LUT"
+python eval_ppl.py --model_name Qwen2.5-7B-Instruct-bf16 --use_nnlut --lut_silu_path "$LUT_SILU" --lut_gelu_path "$LUT_GELU" --lut_exp_path "$LUT_EXP"  2>&1 | tee "$RESULTS_DIR/qwen2.5_7b_nnlut.log"
+
 
 echo ""
 echo "=========================================="

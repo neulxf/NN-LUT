@@ -1,0 +1,9 @@
+model,wiki_ppl
+llama3_8b_baseline,6.135672092437744
+llama3_8b_fplut,6.15049409866333
+llama3_8b_nnlut,6.174114227294922
+qwen2.5_7b_baseline,7.457342624664307
+qwen2.5_7b_nnlut,389825.71875
+qwen3_8b_baseline,9.715299606323242
+qwen3_8b_fplut,41690.83984375
+qwen3_8b_nnlut,700295.75

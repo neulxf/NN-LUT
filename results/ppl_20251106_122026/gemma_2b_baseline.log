@@ -1,54 +1,0 @@
-`torch_dtype` is deprecated! Use `dtype` instead!
-============================================================
-[INFO] Loading Model
-============================================================
-[INFO] Model Name: Gemma-2B
-[INFO] Model Path: google/gemma-2b
-[INFO] Attention Implementation: eager
-[INFO] Data Type: bfloat16 (torch.bfloat16)
-[INFO] Using standard activation functions (baseline)
-[INFO] Sequence Length: 2048
-============================================================
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00, 48.04it/s]
-
-============================================================
-[INFO] Model Configuration
-============================================================
-[INFO] Model Type: gemma
-[INFO] Architecture: ['GemmaForCausalLM']
-[INFO] Hidden Size: 2048
-[INFO] Number of Layers: 18
-[INFO] Number of Attention Heads: 8
-[INFO] Vocabulary Size: 256000
-[INFO] Max Position Embeddings: 8192
-[INFO] Model Loaded Dtype: torch.bfloat16
-[INFO] Total Parameters: 2,506,172,416 (2.51B)
-[INFO] Trainable Parameters: 2,506,172,416
-============================================================
-
-[WARNING] Detected unknown architecture, using llama_attn_forward
-[DEBUG] Config hidden_act: gelu
-[INFO] Detected activation function: GELU
-[INFO] Device map: OrderedDict([('', 0)])
-
-============================================================
-[INFO] Starting PPL Evaluation
-============================================================
-[INFO] Dataset: WikiText
-[INFO] Sequence Length: 2048
-============================================================
-
-  0%|          | 0/141 [00:00<?, ?it/s]evaling ppl:   0%|          | 0/141 [00:00<?, ?it/s]evaling ppl:   0%|          | 0/141 [00:00<?, ?it/s]
-Traceback (most recent call last):
-  File "/home/lxf/workspace/NN-LUT/eval_ppl.py", line 557, in <module>
-    main(args)
-  File "/home/lxf/workspace/NN-LUT/eval_ppl.py", line 551, in main
-    eval_ppl(model, tokenizer, seqlen=args.seqlen)
-  File "/home/lxf/miniforge3/envs/lmeval/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
-    return func(*args, **kwargs)
-  File "/home/lxf/workspace/NN-LUT/eval_ppl.py", line 99, in eval_ppl
-    wiki_ppl = eval_ppl_(model, loader.input_ids, seqlen, limit)
-  File "/home/lxf/workspace/NN-LUT/eval_ppl.py", line 62, in eval_ppl_
-    shift_logits = logits[:, :-1, :]
-UnboundLocalError: local variable 'logits' referenced before assignment
-[W1106 13:01:44.199709432 AllocatorConfig.cpp:28] Warning: PYTORCH_CUDA_ALLOC_CONF is deprecated, use PYTORCH_ALLOC_CONF instead (function operator())

@@ -492,8 +492,8 @@ def main(args):
     
     results = evaluator.simple_evaluate(
         model=HFLM(pretrained=model, tokenizer=tokenizer),
-        # tasks=["arc_easy", "arc_challenge", "boolq", "hellaswag", "lambada_openai", "openbookqa", "piqa", "winogrande"],
-        tasks=["openbookqa"],  # Use this for quick testing
+        tasks=["arc_easy", "arc_challenge", "boolq", "hellaswag", "lambada_openai", "openbookqa", "piqa", "winogrande"],
+        # tasks=["openbookqa"],  # Use this for quick testing
         # Note: social_iqa removed due to datasets library compatibility issues
         num_fewshot=None,
     )

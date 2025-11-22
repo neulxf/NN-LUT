@@ -4,7 +4,6 @@
 
 export PYTHONPATH=.
 export CUDA_VISIBLE_DEVICES=0
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 # 创建结果目录
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
@@ -257,6 +256,40 @@ python eval.py --model_name SmolLM-3B --use_nnlut --lut_silu_path "$LUT_SILU" --
 # python eval.py --model_name RedPajama-3B --use_fplut  2>&1 | tee "$RESULTS_DIR/redpajama_3b_fplut.log"
 # echo "  -> RedPajama-3B - NN-LUT"
 # python eval.py --model_name RedPajama-3B --use_nnlut --lut_silu_path "$LUT_SILU" --lut_gelu_path "$LUT_GELU" --lut_exp_path "$LUT_EXP"  2>&1 | tee "$RESULTS_DIR/redpajama_3b_nnlut.log"
+
+# ========== 大模型 (7B-8B) - 来自 weights 文件夹 ==========
+echo ""
+echo "[Group 4] Large models (7B-8B) from weights/ - SeqLen=default"
+
+# Llama-3-8B (本地权重)
+echo "  -> Llama-3-8B (local) - Baseline"
+python eval.py --model_name llama3-8b-hf  2>&1 | tee "$RESULTS_DIR/llama3_8b_baseline.log"
+
+echo "  -> Llama-3-8B (local) - FPLUT"
+python eval.py --model_name llama3-8b-hf --use_fplut  2>&1 | tee "$RESULTS_DIR/llama3_8b_fplut.log"
+
+echo "  -> Llama-3-8B (local) - NN-LUT"
+python eval.py --model_name llama3-8b-hf --use_nnlut --lut_silu_path "$LUT_SILU" --lut_gelu_path "$LUT_GELU" --lut_exp_path "$LUT_EXP"  2>&1 | tee "$RESULTS_DIR/llama3_8b_nnlut.log"
+
+# Qwen3-8B (本地权重)
+echo "  -> Qwen3-8B (local) - Baseline"
+python eval.py --model_name Qwen3-8B-bf16  2>&1 | tee "$RESULTS_DIR/qwen3_8b_baseline.log"
+
+echo "  -> Qwen3-8B (local) - FPLUT"
+python eval.py --model_name Qwen3-8B-bf16 --use_fplut  2>&1 | tee "$RESULTS_DIR/qwen3_8b_fplut.log"
+
+echo "  -> Qwen3-8B (local) - NN-LUT"
+python eval.py --model_name Qwen3-8B-bf16 --use_nnlut --lut_silu_path "$LUT_SILU" --lut_gelu_path "$LUT_GELU" --lut_exp_path "$LUT_EXP"  2>&1 | tee "$RESULTS_DIR/qwen3_8b_nnlut.log"
+
+# Qwen2.5-7B-Instruct (本地权重)
+echo "  -> Qwen2.5-7B-Instruct (local) - Baseline"
+python eval.py --model_name Qwen2.5-7B-Instruct-bf16  2>&1 | tee "$RESULTS_DIR/qwen2.5_7b_baseline.log"
+
+echo "  -> Qwen2.5-7B-Instruct (local) - FPLUT"
+python eval.py --model_name Qwen2.5-7B-Instruct-bf16 --use_fplut  2>&1 | tee "$RESULTS_DIR/qwen2.5_7b_fplut.log"
+
+echo "  -> Qwen2.5-7B-Instruct (local) - NN-LUT"
+python eval.py --model_name Qwen2.5-7B-Instruct-bf16 --use_nnlut --lut_silu_path "$LUT_SILU" --lut_gelu_path "$LUT_GELU" --lut_exp_path "$LUT_EXP"  2>&1 | tee "$RESULTS_DIR/qwen2.5_7b_nnlut.log"
 
 echo ""
 echo "=========================================="
